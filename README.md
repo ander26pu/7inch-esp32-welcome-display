@@ -24,7 +24,7 @@ Cuando el sensor se desactiva, el sistema vuelve al estado de bienvenida.
 
 ## 🧰 Tecnologías utilizadas
 
-* **Microcontrolador:** ESP32S3
+* **Microcontrolador:** ESP32
 * **IDE:** Arduino IDE
 * **Diseño de UI:** EEZ Studio
 * **Pantalla:** TFT 7 pulgadas
