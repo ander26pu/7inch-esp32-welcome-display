@@ -17,6 +17,26 @@ using namespace esp_panel::board;
  // #include <demos/lv_demos.h>
  // #include <examples/lv_examples.h>
 
+#define PIN_BTN 6            // GPIO que usas para el contacto a GND
+const unsigned long DEBOUNCE_MS = 50;
+const unsigned long SHOW_MS = 3000; // 3 segundos
+
+// Bandera marcada por la ISR
+volatile bool buttonIrqFlag = false;
+volatile uint32_t buttonIrqCount = 0;
+
+// Estado de la aplicación
+enum AppState { STATE_IDLE = 0, STATE_SHOW_ADELANTE = 1 };
+AppState appState = STATE_IDLE;
+unsigned long stateStartMs = 0;
+unsigned long lastProcessedMs = 0;
+
+// ISR muy corta: solo marca bandera (IRAM_ATTR para ESP32)
+void IRAM_ATTR onButtonISR() {
+  buttonIrqFlag = true;
+  buttonIrqCount++;
+}
+
 void setup()
 {
     String title = "LVGL porting example";
@@ -56,10 +76,74 @@ void setup()
 
     /* Release the mutex */
     lvgl_port_unlock();
+
+    // *** FALTABA ESTA CONFIGURACIÓN DEL BOTÓN ***
+    pinMode(PIN_BTN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(PIN_BTN), onButtonISR, FALLING);
+    Serial.println("Button configured on pin " + String(PIN_BTN));
 }
 
 void loop()
 {
-    //Serial.println("IDLE loop");
-    //delay(1000);
+    unsigned long now = millis();
+
+    // *** FALTABA EL HANDLER DE LVGL ***
+    // Procesar LVGL
+    if (lvgl_port_lock(0)) {
+        lv_timer_handler();
+        lvgl_port_unlock();
+    }
+
+    // Procesar evento marcado por ISR (debounce y cambio de pantalla)
+    if (buttonIrqFlag) {
+        // Capturamos y limpiamos bandera de forma atómica
+        noInterrupts();
+        buttonIrqFlag = false;
+        uint32_t irqSnap = buttonIrqCount;
+        interrupts();
+
+        // Anti-rebote: aceptar solo si ha pasado el tiempo
+        if (now - lastProcessedMs >= DEBOUNCE_MS) {
+            lastProcessedMs = now;
+
+            // Solo reaccionar si estamos en IDLE
+            if (appState == STATE_IDLE) {
+                Serial.printf("IRQ #%u -> cargar pantalla ADELANTE\n", irqSnap);
+                // *** FALTABA EL LOCK DE LVGL ***
+                if (lvgl_port_lock(-1)) {
+                    if (objects.adelante) {
+                        lv_scr_load(objects.adelante); // cambiar a pantalla 'adelante'
+                    } else {
+                        Serial.println("Warning: objects.adelante == NULL");
+                    }
+                    lvgl_port_unlock();
+                }
+                appState = STATE_SHOW_ADELANTE;
+                stateStartMs = now;
+            } else {
+                // Si ya está visible la pantalla 'adelante', ignoramos
+                Serial.println("Evento recibido pero ya en estado ADELANTE -> ignorado");
+            }
+        } else {
+            // Ignorado por debounce
+            // Serial.println("Evento ignorado por debounce");
+        }
+    }
+
+    // Si estamos mostrando 'adelante' y pasó SHOW_MS -> volver a main
+    if (appState == STATE_SHOW_ADELANTE) {
+        if (now - stateStartMs >= SHOW_MS) {
+            Serial.println("3s transcurridos -> volver a MAIN");
+            // *** FALTABA EL LOCK DE LVGL ***
+            if (lvgl_port_lock(-1)) {
+                if (objects.main) {
+                    lv_scr_load(objects.main);
+                } else {
+                    Serial.println("Warning: objects.main == NULL");
+                }
+                lvgl_port_unlock();
+            }
+            appState = STATE_IDLE;
+        }
+    }
 }
