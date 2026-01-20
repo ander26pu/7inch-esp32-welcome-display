@@ -1,5 +1,7 @@
 {
   "navigation": {
+    "selectedUserPageObject": "[eez_ui.eez-project]:/userPages/0",
+    "selectedBitmapObject": "[eez_ui.eez-project]:/bitmaps/1",
     "subnavigationSelectedItems": {}
   },
   "layoutModel": {
@@ -20,7 +22,6 @@
           },
           {
             "type": "border",
-            "selected": 2,
             "size": 240,
             "location": "right",
             "children": [
@@ -68,6 +69,7 @@
           },
           {
             "type": "border",
+            "selected": 0,
             "location": "bottom",
             "children": [
               {
@@ -192,7 +194,7 @@
               "children": [
                 {
                   "type": "tab",
-                  "id": "#e0ce6ddc-aca2-4173-ac2a-452cd41942ea",
+                  "id": "#9da9ab15-f7d1-4de7-82f1-a061c5508687",
                   "name": "Settings",
                   "component": "editor",
                   "config": {
@@ -213,7 +215,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
@@ -233,8 +236,7 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -983,17 +985,33 @@
     "[eez_ui.eez-project]:/userPages/0[flow-state]": {
       "selection": {
         "0": {
-          "1": {
-            "$selected": true
-          }
+          "0": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -400,
-          "y": -240
+          "x": -304.12500000000006,
+          "y": -194.10652093270525
         },
-        "scale": 1
+        "scale": 0.75
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
+    },
+    "[eez_ui.eez-project]:/userPages/1[flow-state]": {
+      "selection": {
+        "0": {}
+      },
+      "transform": {
+        "translate": {
+          "x": -300,
+          "y": -140
+        },
+        "scale": 0.75
       },
       "timeline": {
         "isEditorActive": false,
@@ -1019,6 +1037,6 @@
   "lvglExpandedPropertiesGroup": [],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 1,
+  "flowZoom": 0.75,
   "implementationLanguage": "C"
 }
