@@ -28,6 +28,7 @@ void create_screen_main() {
             lv_obj_set_pos(obj, 0, 0);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_bienvenido);
+            lv_img_set_angle(obj, 1800);
         }
     }
     
@@ -51,6 +52,7 @@ void create_screen_adelante() {
             lv_obj_set_pos(obj, 0, 0);
             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
             lv_img_set_src(obj, &img_adelante);
+            lv_img_set_angle(obj, 1800);
         }
     }
     
