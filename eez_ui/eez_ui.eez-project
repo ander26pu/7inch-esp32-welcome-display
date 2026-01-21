@@ -179,7 +179,7 @@
               "pivotX": 0,
               "pivotY": 0,
               "zoom": 256,
-              "angle": 0,
+              "angle": 1800,
               "innerAlign": "CENTER"
             }
           ],
